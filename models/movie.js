@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
+import { userModelConstants, movieModelConstants, common } from '../utils/constants.js';
 
 const urlValidation = {
   validator(value) {
     return validator.isURL(value, { require_protocol: true });
   },
-  message: (props) => `${props.value} не является URL`,
+  message: (props) => `${props.value} ${common.isNotA} ${common.urlString}`,
 };
 
 const movieSchema = new mongoose.Schema({
@@ -46,7 +47,7 @@ const movieSchema = new mongoose.Schema({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
+    ref: userModelConstants.modelName,
     required: true,
   },
   movieId: {
@@ -63,4 +64,4 @@ const movieSchema = new mongoose.Schema({
   },
 }, { versionKey: false });
 
-export default mongoose.model('movie', movieSchema);
+export default mongoose.model(movieModelConstants.modelName, movieSchema);

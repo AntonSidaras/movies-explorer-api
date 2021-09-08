@@ -1,7 +1,6 @@
-/* eslint-disable import/extensions */
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { userModelConstants } from '../utils/constants.js';
+import { userModelConstants, common } from '../utils/constants.js';
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -12,7 +11,7 @@ const userSchema = new mongoose.Schema({
       validator(value) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
       },
-      message: (props) => `${props.value} не является email`,
+      message: (props) => `${props.value} ${common.isNotA} ${common.emailString}`,
     },
   },
   password: {
@@ -25,25 +24,21 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 2,
     maxlength: 30,
-    default: userModelConstants.defaultName,
   },
 }, { versionKey: false });
 
-userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
-  return this.findOne({ email }).select('+password')
-    .then((user) => {
+userSchema.statics.findUserByCredentials = async function findUserByCredentials(email, password) {
+  return this.findOne({ email }).select(userModelConstants.selectPasswordField)
+    .then(async (user) => {
       if (!user) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
+        return Promise.reject(new Error(userModelConstants.wrongUserNameOrPassword));
       }
 
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) {
-            return Promise.reject(new Error('Неправильные почта или пароль'));
-          }
-
-          return user;
-        });
+      const matched = await bcrypt.compare(password, user.password);
+      if (!matched) {
+        return Promise.reject(new Error(userModelConstants.wrongUserNameOrPassword));
+      }
+      return user;
     });
 };
 

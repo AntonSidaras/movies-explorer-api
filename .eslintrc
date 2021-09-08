@@ -8,6 +8,21 @@
           "_id"
         ]
       }
+    ],
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js"
+        ]
+      }
+    },
+    "no-unused-vars": [
+      1,
+      {
+        "allow": [
+          "next"
+        ]
+      }
     ]
   }
 }
