@@ -1,14 +1,13 @@
-/* eslint-disable import/extensions */
 import mongoose from 'mongoose';
-import { logger } from '../middlewares/logger.js';
+import { logger, serviceLogger } from './logger.js';
 
-const connectToMongoDB = async (user, password) => {
-  const atlasURI = `mongodb+srv://${user}:${password}@asidarascluster.k86db.mongodb.net/moviesdb?retryWrites=true&w=majority`;
+const connectToMongoDB = async (URI) => {
   try {
-    await mongoose.connect(atlasURI, {
+    await mongoose.connect(URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+    serviceLogger.info(`connected to ${URI}`);
   } catch (error) {
     logger.error(`message - ${error.message}, stack trace - ${error.stack}`);
     process.exit(1);

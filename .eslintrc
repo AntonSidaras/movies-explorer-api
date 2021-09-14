@@ -9,19 +9,19 @@
         ]
       }
     ],
-    "import/resolver": {
-      "node": {
-        "extensions": [
-          ".js"
-        ]
-      }
-    },
     "no-unused-vars": [
-      1,
+      0,
       {
-        "allow": [
-          "next"
-        ]
+        "vars": "next",
+        "args": "after-used",
+        "ignoreRestSiblings": false
+      }
+    ],
+    "import/extensions": [
+      0,
+      "always",
+      {
+        "ignorePackages": true
       }
     ]
   }
