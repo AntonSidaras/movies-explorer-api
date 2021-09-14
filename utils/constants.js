@@ -13,8 +13,8 @@ const appConstants = {
 };
 
 const authConstants = {
-  secretDev: 'secret',
   bearerStr: 'Bearer ',
+  authRequired: 'Необходима авторизация',
   sameKeyWarning: `!!!ВНИМАНИЕ!!! В продакшне 
   используется тот же секретный ключ, что и в режиме разработки.`,
   okMessage: 'Всё в порядке. Секретные ключи отличаются',
@@ -24,11 +24,21 @@ const authConstants = {
 };
 
 const common = {
+  secretDev: 'secret',
   isNotA: 'не является',
   emailString: 'email',
   urlString: 'URL',
   developmentMode: 'development',
   productionMode: 'production',
+  pathSignIn: '/signin',
+  pathSignUp: '/signup',
+  pathSignOut: '/signout',
+};
+
+const errorNameConstants = {
+  castErrorName: 'CastError',
+  validationErrorName: 'ValidationError',
+  mongoErrorName: 'MongoError',
 };
 
 const errorHandlerConstants = {
@@ -47,4 +57,5 @@ export {
   movieModelConstants,
   corsPolicyConstants,
   errorHandlerConstants,
+  errorNameConstants,
 };

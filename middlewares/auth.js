@@ -6,7 +6,7 @@ import { serviceLogger } from '../utils/logger.js';
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const handleAuthError = (res, next) => {
-  next(new Unauthorized());
+  next(new Unauthorized(authConstants.authRequired));
 };
 
 const extractBearerToken = (header) => header.replace(authConstants.bearerStr, '');
@@ -23,7 +23,7 @@ const auth = (req, res, next) => {
 
   if (NODE_ENV === common.productionMode) {
     try {
-      payload = jwt.verify(token, authConstants.secretDev);
+      payload = jwt.verify(token, common.secretDev);
       serviceLogger.info(authConstants.sameKeyWarning);
     } catch (err) {
       if (err.name === authConstants.jwtError && err.message === authConstants.jwtErrorMessage) {
@@ -36,7 +36,7 @@ const auth = (req, res, next) => {
 
   try {
     payload = jwt.verify(token,
-      NODE_ENV === common.productionMode ? JWT_SECRET : authConstants.secretDev);
+      NODE_ENV === common.productionMode ? JWT_SECRET : common.secretDev);
   } catch (err) {
     return handleAuthError(res, next);
   }

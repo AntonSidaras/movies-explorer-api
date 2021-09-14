@@ -10,6 +10,7 @@ import connectToMongoDB from './utils/db.js';
 import errorHandler from './middlewares/error-handler.js';
 import limiter from './middlewares/limiter.js';
 import { common, appConstants } from './utils/constants.js';
+import authRouter from './routes/auth.js';
 
 env.config();
 
@@ -32,7 +33,9 @@ app.use(limiter);
 app.use(helmetPolicy);
 app.use(corsPolicy);
 
-app.use(auth);
+app.use(authRouter);
+
+app.use(auth); // нужна правка под куки
 
 app.use(errorLogger);
 app.use(errors());
