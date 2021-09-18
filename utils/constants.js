@@ -30,15 +30,28 @@ const common = {
   urlString: 'URL',
   developmentMode: 'development',
   productionMode: 'production',
+  tokenString: 'auth_token',
+  messageLoggedOut: 'Successfully logged out',
   pathSignIn: '/signin',
   pathSignUp: '/signup',
   pathSignOut: '/signout',
+  pathRoot: '/',
+  pathAny: '*',
+  pathMovieId: '/:movieId',
+  pathMe: '/me',
+  basePathUsers: '/users',
+  basePathMovies: '/movies',
 };
 
 const errorNameConstants = {
   castErrorName: 'CastError',
   validationErrorName: 'ValidationError',
   mongoErrorName: 'MongoError',
+  mongoServerErrorName: 'MongoServerError',
+  userNotFoundErrorName: 'Нет пользователя с _id',
+  movieNotFoundErrorName: 'Нет фильма с _id:',
+  movieDeleteErrorName: 'Нельзя удалять чужие фильмы!',
+  urlNotFoundName: 'URL не найден',
 };
 
 const errorHandlerConstants = {

@@ -18,7 +18,15 @@ const signUpSchema = celebrate({
   }),
 });
 
+const singOutSchema = celebrate({
+  [Segments.BODY]: Joi.object().keys({}),
+  [Segments.HEADERS]: Joi.object().keys({
+    'content-type': Joi.string().pattern(/^application\/json$/i).required(),
+  }).unknown(true),
+});
+
 export {
   signInSchema,
   signUpSchema,
+  singOutSchema,
 };

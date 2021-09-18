@@ -9,8 +9,11 @@ import helmetPolicy from './middlewares/helmet-policy.js';
 import connectToMongoDB from './utils/db.js';
 import errorHandler from './middlewares/error-handler.js';
 import limiter from './middlewares/limiter.js';
-import { common, appConstants } from './utils/constants.js';
+import { common, appConstants, errorNameConstants } from './utils/constants.js';
 import authRouter from './routes/auth.js';
+import userRouter from './routes/users.js';
+import movieRouter from './routes/movies.js';
+import NotFound from './utils/not-found-error.js';
 
 env.config();
 
@@ -35,7 +38,13 @@ app.use(corsPolicy);
 
 app.use(authRouter);
 
-app.use(auth); // нужна правка под куки
+app.use(auth);
+
+app.use(common.basePathUsers, userRouter);
+app.use(common.basePathMovies, movieRouter);
+app.use(common.pathAny, (req, res, next) => {
+  next(new NotFound(errorNameConstants.urlNotFoundName));
+});
 
 app.use(errorLogger);
 app.use(errors());

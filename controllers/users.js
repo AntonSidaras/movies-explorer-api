@@ -19,11 +19,10 @@ const login = (req, res, next) => {
         NODE_ENV === common.productionMode ? JWT_SECRET : common.secretDev,
         { expiresIn: '7d' },
       );
-      // res.status(200).send({ token });
-      res.cookie('access_token', token, {
+      res.cookie(common.tokenString, token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-      }).status(200).json({ message: 'Logged in successfully' });
+        secure: process.env.NODE_ENV === common.productionMode,
+      }).status(200).json({ token });
     })
     .catch((err) => {
       throw new Unauthorized(err.message);
@@ -44,9 +43,7 @@ const createUser = (req, res, next) => {
     }))
     .then((user) => {
       res.status(200).send({
-        data: {
-          id: user._id, name: user.name, email: user.email,
-        },
+        id: user._id, name: user.name, email: user.email,
       });
     })
     .catch((err) => {
@@ -54,8 +51,49 @@ const createUser = (req, res, next) => {
         || err.name === errorNameConstants.validationErrorName) {
         throw new BadRequest(err.message);
       }
-      if (err.name === errorNameConstants.mongoErrorName && err.code === 11000) {
-        throw new Conflict(`Пользователе с email ${email} уже существует`);
+      if ((err.name === errorNameConstants.mongoErrorName
+        || err.name === errorNameConstants.mongoServerErrorName) && err.code === 11000) {
+        throw new Conflict(`Пользователь с email ${email} уже существует`);
+      }
+    })
+    .catch(next);
+};
+
+const getUserInfo = (req, res, next) => {
+  User.findById(req.user._id)
+    .orFail(() => {
+      next(new NotFound(`${errorNameConstants.userNotFoundErrorName} ${req.user._id}`));
+    })
+    .then((user) => {
+      res.status(200).send(user);
+    })
+    .catch((err) => {
+      if (err.name === errorNameConstants.castErrorName) {
+        throw new BadRequest(err.message);
+      }
+    })
+    .catch(next);
+};
+
+const updateUserInfo = (req, res, next) => {
+  const { name, email } = req.body;
+  const userId = req.user._id;
+
+  User.findByIdAndUpdate(
+    { _id: userId },
+    { name, email },
+    { new: true, runValidators: true },
+  )
+    .orFail(() => {
+      next(new NotFound(`${errorNameConstants.userNotFoundErrorName} ${userId}`));
+    })
+    .then((user) => {
+      res.status(200).send(user);
+    })
+    .catch((err) => {
+      if (err.name === errorNameConstants.castErrorName
+        || err.name === errorNameConstants.validationErrorName) {
+        throw new BadRequest(err.message);
       }
     })
     .catch(next);
@@ -64,4 +102,6 @@ const createUser = (req, res, next) => {
 export {
   login,
   createUser,
+  updateUserInfo,
+  getUserInfo,
 };

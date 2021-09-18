@@ -12,13 +12,27 @@ const handleAuthError = (res, next) => {
 const extractBearerToken = (header) => header.replace(authConstants.bearerStr, '');
 
 const auth = (req, res, next) => {
-  const { authorization } = req.headers;
+  let hasAuthCookie = false;
+  let hasAuthHeader = false;
 
-  if (!authorization || !authorization.startsWith(authConstants.bearerStr)) {
+  const { authorization } = req.headers;
+  const cookieToken = req.cookies.access_token;
+  let token = '';
+
+  if (cookieToken) {
+    hasAuthCookie = true;
+    token = cookieToken;
+  }
+
+  if (authorization || authorization.startsWith(authConstants.bearerStr)) {
+    hasAuthHeader = true;
+    token = extractBearerToken(authorization);
+  }
+
+  if (!(hasAuthCookie || hasAuthHeader)) {
     return handleAuthError(res, next);
   }
 
-  const token = extractBearerToken(authorization);
   let payload;
 
   if (NODE_ENV === common.productionMode) {
