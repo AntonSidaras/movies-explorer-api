@@ -4,6 +4,15 @@ import NotFound from '../utils/not-found-error.js';
 import Forbidden from '../utils/forbidden-error.js';
 import { errorNameConstants } from '../utils/constants.js';
 
+const getMovies = (req, res, next) => {
+  Movie.find({})
+    .populate('owner')
+    .then((cards) => {
+      res.status(200).send(cards);
+    })
+    .catch(next);
+};
+
 const createMovie = (req, res, next) => {
   const {
     country,
@@ -46,6 +55,7 @@ const createMovie = (req, res, next) => {
       if (err.name === errorNameConstants.validationErrorName) {
         throw new BadRequest(err.message);
       }
+      throw err;
     })
     .catch(next);
 };
@@ -67,22 +77,19 @@ const deleteMovie = (req, res, next) => {
         .then((m) => {
           res.status(200).send(m);
         })
-        .catch((err) => {
-          if (err.name === errorNameConstants.castErrorName) {
-            throw new BadRequest(err.message);
-          }
-        })
         .catch(next);
     })
     .catch((err) => {
       if (err.name === errorNameConstants.castErrorName) {
         throw new BadRequest(err.message);
       }
+      throw err;
     })
     .catch(next);
 };
 
 export {
+  getMovies,
   createMovie,
   deleteMovie,
 };

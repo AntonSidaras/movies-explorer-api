@@ -9,11 +9,11 @@ import helmetPolicy from './middlewares/helmet-policy.js';
 import connectToMongoDB from './utils/db.js';
 import errorHandler from './middlewares/error-handler.js';
 import limiter from './middlewares/limiter.js';
-import { common, appConstants, errorNameConstants } from './utils/constants.js';
+import { common, appConstants } from './utils/constants.js';
 import authRouter from './routes/auth.js';
 import userRouter from './routes/users.js';
 import movieRouter from './routes/movies.js';
-import NotFound from './utils/not-found-error.js';
+import any from './routes/any.js';
 
 env.config();
 
@@ -24,9 +24,9 @@ const {
 } = process.env;
 
 const app = express();
-app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 connectToMongoDB(NODE_ENV === common.productionMode ? MONGO_URI : appConstants.localhostDB);
 
@@ -40,11 +40,9 @@ app.use(authRouter);
 
 app.use(auth);
 
-app.use(common.basePathUsers, userRouter);
-app.use(common.basePathMovies, movieRouter);
-app.use(common.pathAny, (req, res, next) => {
-  next(new NotFound(errorNameConstants.urlNotFoundName));
-});
+app.use(userRouter);
+app.use(movieRouter);
+app.use(any);
 
 app.use(errorLogger);
 app.use(errors());

@@ -7,7 +7,7 @@ const authRouter = express.Router();
 
 authRouter.post(common.pathSignIn, signInSchema, login);
 authRouter.post(common.pathSignUp, signUpSchema, createUser);
-authRouter.post(common.pathSignOut, singOutSchema, (req, res, next) => {
+authRouter.post(common.pathSignOut, singOutSchema, (req, res) => {
   res.clearCookie(common.tokenString).status(200).json({ message: common.messageLoggedOut });
 });
 

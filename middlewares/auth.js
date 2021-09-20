@@ -16,7 +16,7 @@ const auth = (req, res, next) => {
   let hasAuthHeader = false;
 
   const { authorization } = req.headers;
-  const cookieToken = req.cookies.access_token;
+  const cookieToken = req.cookies.auth_token;
   let token = '';
 
   if (cookieToken) {
@@ -24,9 +24,11 @@ const auth = (req, res, next) => {
     token = cookieToken;
   }
 
-  if (authorization || authorization.startsWith(authConstants.bearerStr)) {
-    hasAuthHeader = true;
-    token = extractBearerToken(authorization);
+  if (authorization) {
+    if (authorization.startsWith(authConstants.bearerStr)) {
+      hasAuthHeader = true;
+      token = extractBearerToken(authorization);
+    }
   }
 
   if (!(hasAuthCookie || hasAuthHeader)) {

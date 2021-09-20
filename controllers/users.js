@@ -21,7 +21,8 @@ const login = (req, res, next) => {
       );
       res.cookie(common.tokenString, token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === common.productionMode,
+        secure: true,
+        maxAge: 3600000 * 24 * 7,
       }).status(200).json({ token });
     })
     .catch((err) => {
@@ -55,6 +56,7 @@ const createUser = (req, res, next) => {
         || err.name === errorNameConstants.mongoServerErrorName) && err.code === 11000) {
         throw new Conflict(`Пользователь с email ${email} уже существует`);
       }
+      throw err;
     })
     .catch(next);
 };
@@ -71,6 +73,7 @@ const getUserInfo = (req, res, next) => {
       if (err.name === errorNameConstants.castErrorName) {
         throw new BadRequest(err.message);
       }
+      throw err;
     })
     .catch(next);
 };
@@ -95,6 +98,11 @@ const updateUserInfo = (req, res, next) => {
         || err.name === errorNameConstants.validationErrorName) {
         throw new BadRequest(err.message);
       }
+      if ((err.name === errorNameConstants.mongoErrorName
+        || err.name === errorNameConstants.mongoServerErrorName) && err.code === 11000) {
+        throw new Conflict(`Невозможно сменить email. Другой пользователь с email ${email} уже существует`);
+      }
+      throw err;
     })
     .catch(next);
 };

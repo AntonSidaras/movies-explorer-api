@@ -18,7 +18,7 @@ const createMovieSchema = celebrate({
     image: Joi.string().custom(customIsURL, 'custom validation').required(),
     trailer: Joi.string().custom(customIsURL, 'custom validation').required(),
     thumbnail: Joi.string().custom(customIsURL, 'custom validation').required(),
-    movieId: Joi.string().hex().length(24).required(),
+    movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
