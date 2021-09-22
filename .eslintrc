@@ -1,0 +1,37 @@
+{
+  "extends": "airbnb-base",
+  "rules": {
+    "no-underscore-dangle": [
+      1,
+      {
+        "allow": [
+          "_id"
+        ]
+      }
+    ],
+    /*The rule no-unused-vars is very useful. However there are times at which its current structure 
+    is at odds with other peoples' APIs.
+    Consider the case of a page error handler to express.js, whose signature is roughly
+    app.use(function(err, req, res, next) { ... });
+    If you want to write a 404 handler that looks at what the actual error was, and sets 
+    things on the response, but doesn't care what the request is (say, maybe you're making an imgur clone,) then you're out of 
+    luck: there is no way to write that which won't ring eslint's bell.
+    Could eslint be extended to do what erlang does? Prefixing a name with an underscore in erlang suppresses non-use detection. Then we could just name them _req and _next and the problem goes away.*/
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "next"
+      }
+    ],
+    /*//При использовании импортов нужно обязательно указывать расширение файла. 
+    При импорте индексного файла из директории также нужно полностью указывать путь до файла
+    airbnb-base не разрешает такое, поэтому руками отключаю*/
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "always"
+      }
+    ]
+  }
+}
