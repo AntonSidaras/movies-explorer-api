@@ -2,7 +2,8 @@ import cors from 'cors';
 import { corsPolicyConstants } from '../utils/constants.js';
 
 const allowedOrigins = [
-  'http://localhost:3000',
+  'http://movies.asidaras.ru',
+  'https://movies.asidaras.ru',
 ];
 
 const corsPolicy = cors({
