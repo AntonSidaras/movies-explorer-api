@@ -4,6 +4,8 @@ import { corsPolicyConstants } from '../utils/constants.js';
 const allowedOrigins = [
   'http://movies.asidaras.ru',
   'https://movies.asidaras.ru',
+  'http://asidaras.ru',
+  'https://asidaras.ru',
 ];
 
 const corsPolicy = cors({
